@@ -3,7 +3,6 @@ package com.xad.jytest.sstest;
 import com.google.protobuf.Message;
 import com.xad.enigma.*;
 import com.xad.enigma.EnigmaEventFramework.EnigmaEnvelope;
-import com.xad.enigma.eventmodel.core.Topic;
 import kafka.serializer.DefaultDecoder;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.Function;
@@ -49,26 +48,11 @@ public class STest1 {
                 topicsSet
         );
 
-        // Get the lines, split them into words, count the words and print
-        /*JavaDStream<String> lines = directStream.map(new Function<Tuple2<String, String>, String>() {
-            @Override
-            public String call(Tuple2<String, String> tuple2) {
-                return tuple2._1 + "___" + tuple2._2();
-            }
-        });
-
-        lines.print();*/
-        // final DataFileWriter<Object> writer = new DataFileWriter<>(new ProtobufDatumWriter<>());
-        // Path path = getOutputPath();
-
         JavaDStream<Message> message = directStream.map(new Function<Tuple2<byte[], EnigmaEnvelope>, Message>() {
             @Override
             public Message call(Tuple2<byte[], EnigmaEnvelope> tuple2) {
                 try {
                     EnigmaEnvelope envelope = tuple2._2();
-
-
-                    Class<com.google.protobuf.Message> protoClass = Topic.fromName(envelope.getEventTopic()).protoClass;
 
                     String topic = envelope.getEventTopic();
                     byte[] data = envelope.getEventData().toByteArray();
